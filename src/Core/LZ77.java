@@ -22,7 +22,6 @@ public class LZ77 extends File {
             return;
         }
 
-//        File.printFileContent(fileData);
 
         switch (args[0]) {
             case "-c":

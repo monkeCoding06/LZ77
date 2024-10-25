@@ -9,12 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Compression {
-
     static void compress(byte[] data, String outputPath) {
-        String input = new String(data);
+        System.out.println("Compresssing...");
+        String input = new String(data).replace("(", "\\(").replace(")", "\\)"); // escaping braces to work for compressing code for exampe
         int inputLength = input.length();
         List<String> output = new ArrayList<>();
-        System.out.println(data.length + " bytes");
 
         int windowSize = data.length;
         int lookaheadBufferSize = data.length;
@@ -49,8 +48,8 @@ public class Compression {
                 i++;
             }
 
-
             int currentPercentage = (int) ((double) i / inputLength * 100);
+            currentPercentage = Math.min(currentPercentage, 100); // Clamp to 100%
             if (currentPercentage != lastPercentage) {
                 ProgressBar.printProgressBar(currentPercentage);
                 lastPercentage = currentPercentage;
