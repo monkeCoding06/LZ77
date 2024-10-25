@@ -13,14 +13,14 @@ public class Decompression {
 
         int index = 0;
         int totalLength = compressedData.length();
-        int lastPercentage = -1; // For tracking progress updates
+        int lastPercentage = -1;
 
         while (index < totalLength) {
             int openBracket = compressedData.indexOf('(', index);
             int closeBracket = compressedData.indexOf(')', openBracket);
 
             if (openBracket == -1 || closeBracket == -1) {
-                break; // Exit if no more valid tokens
+                break;
             }
 
             String token = compressedData.substring(openBracket + 1, closeBracket);
@@ -28,7 +28,7 @@ public class Decompression {
 
             if (parts.length < 3) {
                 System.err.println("Invalid token: " + token);
-                break; // Handle invalid token
+                break;
             }
 
             try {
@@ -51,7 +51,7 @@ public class Decompression {
                 index = closeBracket + 1;
 
                 int currentPercentage = (int) ((double) index / totalLength * 100);
-                currentPercentage = Math.min(currentPercentage, 100); // Clamp to 100%
+                currentPercentage = Math.min(currentPercentage, 100); //clamp to 100%
                 if (currentPercentage != lastPercentage) {
                     ProgressBar.printProgressBar(currentPercentage);
                     lastPercentage = currentPercentage;
