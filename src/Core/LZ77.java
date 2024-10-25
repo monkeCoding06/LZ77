@@ -8,9 +8,6 @@ import java.util.List;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.io.DataOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 public class LZ77 extends File {
     Messages messages = new Messages();
@@ -41,7 +38,7 @@ public class LZ77 extends File {
 
             case "-d":
             case "--decompress":
-                decompress(fileData);
+                decompress(fileData, "Files/decompressed.txt");
                 break;
 
             default:
@@ -56,8 +53,9 @@ public class LZ77 extends File {
         String input = new String(data);
         int inputLength = input.length();
         List<String> output = new ArrayList<>();
-        int windowSize = 20;
-        int lookaheadBufferSize = 15;
+        System.out.println(data.length + "bytes");
+        int windowSize = data.length;
+        int lookaheadBufferSize = data.length ;
 
         for (int i = 0; i < inputLength; ) {
             int matchLength = 0;
@@ -88,7 +86,7 @@ public class LZ77 extends File {
             }
         }
 
-        String compressedOutput = String.join("\n", output);
+        String compressedOutput = String.join("", output);
 
         String outputFilePath = outputPath.endsWith(".lz") ? outputPath : outputPath + ".lz";
         try {
@@ -100,9 +98,50 @@ public class LZ77 extends File {
     }
 
 
+    private void decompress(byte[] data, String outputPath) {
+        String compressedData = new String(data);
+        StringBuilder decompressedOutput = new StringBuilder();
 
 
+        int index = 0;
+        while (index < compressedData.length()) {
+            int openBracket = compressedData.indexOf('(', index);
+            int closeBracket = compressedData.indexOf(')', openBracket);
 
-    private void decompress(byte[] data) {
+            if (openBracket == -1 || closeBracket == -1) {
+                break;
+            }
+
+
+            String token = compressedData.substring(openBracket + 1, closeBracket);
+            String[] parts = token.split(", ");
+
+            int matchDistance = Integer.parseInt(parts[0]);
+            int matchLength = Integer.parseInt(parts[1]);
+            char nextChar = parts[2].charAt(1);
+
+            int start = decompressedOutput.length() - matchDistance;
+
+
+            for (int i = 0; i < matchLength; i++) {
+                decompressedOutput.append(decompressedOutput.charAt(start + i));
+            }
+
+
+            decompressedOutput.append(nextChar);
+
+
+            index = closeBracket + 1;
+        }
+
+
+        String outputFilePath = outputPath.endsWith(".txt") ? outputPath : outputPath + ".txt";
+        try {
+            Files.write(Paths.get(outputFilePath), decompressedOutput.toString().getBytes());
+            System.out.println("Decompressed output written to: " + outputFilePath);
+        } catch (IOException e) {
+            System.err.println("Error writing decompressed file: " + e.getMessage());
+        }
     }
+
 }
