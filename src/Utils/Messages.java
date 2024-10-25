@@ -1,7 +1,7 @@
 package Utils;
 
 public class Messages {
-    public String helpMessage = "Usage: lz77 [options] <file_path>\n"
+    public static String helpMessage = "Usage: lz77 [options] <file_path>\n"
             + "Options:\n"
             + "  -c, --compress      Compress the specified file.\n"
             + "  -d, --decompress    Decompress the specified file.\n"
@@ -12,7 +12,7 @@ public class Messages {
             + "\n"
             + "Note: Ensure that the specified file path is correct and that the file exists.";
 
-    public String specifyPath = "Specify the path after -c or -d\nex.: lz76 -c somefile.txt";
-    public String invalidOption = "Invalid option. Use -c/--compress or -d/--decompress.";
+    public static String specifyPath = "Specify the path after -c or -d\nex.: lz76 -c somefile.txt";
+    public static String invalidOption = "Invalid option. Use -c/--compress or -d/--decompress.";
 
 }
