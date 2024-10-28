@@ -23,16 +23,12 @@ public class Decompression {
             if (secondComma == -1) break;
 
             try {
-                // Parse matchDistance
                 int matchDistance = Integer.parseInt(compressedData.substring(index, nextComma));
 
-                // Parse matchLength
                 int matchLength = Integer.parseInt(compressedData.substring(nextComma + 1, secondComma));
 
-                // Parse nextChar
                 char nextChar = compressedData.charAt(secondComma + 1);
 
-                // Update decompressed output
                 int start = decompressedOutput.length() - matchDistance;
                 for (int i = 0; i < matchLength; i++) {
                     if (start + i >= 0) {
@@ -40,15 +36,12 @@ public class Decompression {
                     }
                 }
 
-                // Append nextChar if it's not null
                 if (nextChar != '\0') {
                     decompressedOutput.append(nextChar);
                 }
 
-                // Move index past the current token
                 index = secondComma + 2;
 
-                // Update progress bar
                 int currentPercentage = (int) ((double) index / totalLength * 100);
                 currentPercentage = Math.min(currentPercentage, 100);
                 if (currentPercentage != lastPercentage) {
