@@ -11,7 +11,7 @@ import java.util.List;
 public class Compression {
     static void compress(byte[] data, String outputPath) {
         System.out.println("Compresssing...");
-        String input = new String(data).replace("(", "\\(").replace(")", "\\)"); // escaping braces to work for compressing code for exampe
+        String input = new String(data);
         int inputLength = input.length();
         List<String> output = new ArrayList<>();
 

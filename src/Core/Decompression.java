@@ -8,7 +8,7 @@ import Utils.ProgressBar;
 public class Decompression {
     static void decompress(byte[] data, String outputPath) {
         System.out.println("Decompresssing...");
-        String compressedData = new String(data).replace("\\(", "(").replace("\\)", ")");
+        String compressedData = new String(data);
         StringBuilder decompressedOutput = new StringBuilder();
 
         int index = 0;
