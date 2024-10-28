@@ -7,7 +7,7 @@ import Utils.ProgressBar;
 
 public class Decompression {
     static void decompress(byte[] data, String outputPath) {
-        System.out.println("Decompresssing...");
+        System.out.println("Decompressing...");
         String compressedData = new String(data);
         StringBuilder decompressedOutput = new StringBuilder();
 
