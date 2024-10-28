@@ -1,38 +1,40 @@
 package Core;
 
 import Utils.ProgressBar;
+
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Decompression {
     static void decompress(byte[] data, String outputPath) {
         System.out.println("Decompressing...");
-        String compressedData = new String(data, StandardCharsets.UTF_8);
-        StringBuilder decompressedOutput = new StringBuilder();
+        int totalLength = data.length;
+        List<Byte> decompressedOutput = new ArrayList<>();
 
         int index = 0;
-        int totalLength = compressedData.length();
         int lastPercentage = -1;
 
         while (index < totalLength) {
-            char firstChar = compressedData.charAt(index);
-            char secondChar = compressedData.charAt(index + 1);
-            char nextChar = compressedData.charAt(index + 2);
+            int matchDistance = Byte.toUnsignedInt(data[index]);
+            int matchLength = Byte.toUnsignedInt(data[index + 1]);
+            byte nextByte = data[index + 2];
 
-            int matchDistance = (int) firstChar;
-            int matchLength = (int) secondChar;
-
-            int start = decompressedOutput.length() - matchDistance;
-            for (int i = 0; i < matchLength; i++) {
-                if (start + i >= 0) {
-                    decompressedOutput.append(decompressedOutput.charAt(start + i));
+            if (matchDistance <= decompressedOutput.size()) {
+                int start = decompressedOutput.size() - matchDistance;
+                for (int i = 0; i < matchLength; i++) {
+                    if (start + i >= 0 && start + i < decompressedOutput.size()) {
+                        decompressedOutput.add(decompressedOutput.get(start + i));
+                    }
                 }
+            } else {
+                System.err.println("Warning: matchDistance exceeds decompressed data length. Skipping match.");
             }
 
-            if (nextChar != '\0') {
-                decompressedOutput.append(nextChar);
+            if (nextByte != 0) {
+                decompressedOutput.add(nextByte);
             }
 
             index += 3;
@@ -43,15 +45,19 @@ public class Decompression {
                 ProgressBar.printProgressBar(currentPercentage);
                 lastPercentage = currentPercentage;
             }
+            if (currentPercentage == 100) {
+                System.out.println();
+            }
         }
 
-        if (lastPercentage == 100) {
-            System.out.println();
+        byte[] outputBytes = new byte[decompressedOutput.size()];
+        for (int i = 0; i < decompressedOutput.size(); i++) {
+            outputBytes[i] = decompressedOutput.get(i);
         }
 
         String outputFilePath = outputPath.endsWith(".txt") ? outputPath : outputPath + ".txt";
         try {
-            Files.write(Paths.get(outputFilePath), decompressedOutput.toString().getBytes());
+            Files.write(Paths.get(outputFilePath), outputBytes);
             System.out.println("Decompressed output written to: " + outputFilePath);
         } catch (IOException e) {
             System.err.println("Error writing decompressed file: " + e.getMessage());
