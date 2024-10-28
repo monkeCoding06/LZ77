@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Compression {
     static void compress(byte[] data, String outputPath) {
-        System.out.println("Compresssing...");
+        System.out.println("Compressing...");
         String input = new String(data);
         int inputLength = input.length();
         List<String> output = new ArrayList<>();
