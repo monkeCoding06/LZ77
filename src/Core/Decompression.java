@@ -1,6 +1,7 @@
 package Core;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import Utils.ProgressBar;
@@ -8,7 +9,7 @@ import Utils.ProgressBar;
 public class Decompression {
     static void decompress(byte[] data, String outputPath) {
         System.out.println("Decompressing...");
-        String compressedData = new String(data);
+        String compressedData = new String(data, StandardCharsets.UTF_8);
         StringBuilder decompressedOutput = new StringBuilder();
 
         int index = 0;

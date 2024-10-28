@@ -3,6 +3,7 @@ package Core;
 import Utils.ProgressBar;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.List;
 public class Compression {
     static void compress(byte[] data, String outputPath) {
         System.out.println("Compressing...");
-        String input = new String(data);
+        String input = new String(data, StandardCharsets.UTF_8);
         int inputLength = input.length();
         List<String> output = new ArrayList<>();
 
