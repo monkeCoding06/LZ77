@@ -16,8 +16,8 @@ public class Compression {
         int inputLength = input.length();
         List<String> output = new ArrayList<>();
 
-        int windowSize = 4096 * 8;
-        int lookaheadBufferSize = 4096 * 8;
+        int windowSize = 4096;
+        int lookaheadBufferSize = 4096;
 
         int lastPercentage = -1;
 
@@ -42,10 +42,10 @@ public class Compression {
             if (matchLength > 0) {
                 int nextCharIndex = i + matchLength;
                 char nextChar = nextCharIndex < inputLength ? input.charAt(nextCharIndex) : '\0';
-                output.add(matchDistance + "," + matchLength + "," + nextChar);
+                output.add((char)matchDistance + "" + (char)matchLength + nextChar);
                 i += matchLength + 1;
             } else {
-                output.add("0,0," + input.charAt(i));
+                output.add((char) 0 + "" + (char) 0 + String.valueOf(input.charAt(i)));
                 i++;
             }
 
