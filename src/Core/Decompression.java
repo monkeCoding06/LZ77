@@ -16,42 +16,41 @@ public class Decompression {
         int lastPercentage = -1;
 
         while (index < totalLength) {
-            int openBracket = compressedData.indexOf('(', index);
-            int closeBracket = compressedData.indexOf(')', openBracket);
+            int nextComma = compressedData.indexOf(',', index);
+            if (nextComma == -1) break;
 
-            if (openBracket == -1 || closeBracket == -1) {
-                break;
-            }
-
-            String token = compressedData.substring(openBracket + 1, closeBracket);
-            String[] parts = token.split(", ");
-
-            if (parts.length < 3) {
-                System.err.println("Invalid token: " + token);
-                break;
-            }
+            int secondComma = compressedData.indexOf(',', nextComma + 1);
+            if (secondComma == -1) break;
 
             try {
-                int matchDistance = Integer.parseInt(parts[0]);
-                int matchLength = Integer.parseInt(parts[1]);
-                char nextChar = parts[2].charAt(1);
+                // Parse matchDistance
+                int matchDistance = Integer.parseInt(compressedData.substring(index, nextComma));
 
+                // Parse matchLength
+                int matchLength = Integer.parseInt(compressedData.substring(nextComma + 1, secondComma));
+
+                // Parse nextChar
+                char nextChar = compressedData.charAt(secondComma + 1);
+
+                // Update decompressed output
                 int start = decompressedOutput.length() - matchDistance;
-
                 for (int i = 0; i < matchLength; i++) {
                     if (start + i >= 0) {
                         decompressedOutput.append(decompressedOutput.charAt(start + i));
                     }
                 }
 
+                // Append nextChar if it's not null
                 if (nextChar != '\0') {
                     decompressedOutput.append(nextChar);
                 }
 
-                index = closeBracket + 1;
+                // Move index past the current token
+                index = secondComma + 2;
 
+                // Update progress bar
                 int currentPercentage = (int) ((double) index / totalLength * 100);
-                currentPercentage = Math.min(currentPercentage, 100); //clamp to 100%
+                currentPercentage = Math.min(currentPercentage, 100);
                 if (currentPercentage != lastPercentage) {
                     ProgressBar.printProgressBar(currentPercentage);
                     lastPercentage = currentPercentage;

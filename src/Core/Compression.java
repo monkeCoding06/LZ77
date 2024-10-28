@@ -41,10 +41,10 @@ public class Compression {
             if (matchLength > 0) {
                 int nextCharIndex = i + matchLength;
                 char nextChar = nextCharIndex < inputLength ? input.charAt(nextCharIndex) : '\0';
-                output.add("(" + matchDistance + ", " + matchLength + ", '" + nextChar + "')");
+                output.add(matchDistance + "," + matchLength + "," + nextChar);
                 i += matchLength + 1;
             } else {
-                output.add("(0, 0, '" + input.charAt(i) + "')");
+                output.add("0,0," + input.charAt(i));
                 i++;
             }
 
