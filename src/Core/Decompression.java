@@ -1,68 +1,56 @@
 package Core;
 
+import Utils.ProgressBar;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import Utils.ProgressBar;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Decompression {
     static void decompress(byte[] data, String outputPath) {
         System.out.println("Decompressing...");
-        String compressedData = new String(data, StandardCharsets.UTF_8);
-        StringBuilder decompressedOutput = new StringBuilder();
+        int totalLength = data.length;
+        List<Byte> decompressedOutput = new ArrayList<>();
 
         int index = 0;
-        int totalLength = compressedData.length();
         int lastPercentage = -1;
 
         while (index < totalLength) {
-            int nextComma = compressedData.indexOf(',', index);
-            if (nextComma == -1) break;
+            int matchDistance = ((data[index] & 0xFF) << 8) | (data[index + 1] & 0xFF);
+            int matchLength = ((data[index + 2] & 0xFF) << 8) | (data[index + 3] & 0xFF);
+            byte nextByte = data[index + 4];
 
-            int secondComma = compressedData.indexOf(',', nextComma + 1);
-            if (secondComma == -1) break;
-
-            try {
-                int matchDistance = Integer.parseInt(compressedData.substring(index, nextComma));
-
-                int matchLength = Integer.parseInt(compressedData.substring(nextComma + 1, secondComma));
-
-                char nextChar = compressedData.charAt(secondComma + 1);
-
-                int start = decompressedOutput.length() - matchDistance;
+            if (matchDistance > 0) {
+                int start = decompressedOutput.size() - matchDistance;
                 for (int i = 0; i < matchLength; i++) {
-                    if (start + i >= 0) {
-                        decompressedOutput.append(decompressedOutput.charAt(start + i));
-                    }
+                    decompressedOutput.add(decompressedOutput.get(start + i));
                 }
+            }
 
-                if (nextChar != '\0') {
-                    decompressedOutput.append(nextChar);
-                }
+            decompressedOutput.add(nextByte);
 
-                index = secondComma + 2;
+            index += 5;
 
-                int currentPercentage = (int) ((double) index / totalLength * 100);
-                currentPercentage = Math.min(currentPercentage, 100);
-                if (currentPercentage != lastPercentage) {
-                    ProgressBar.printProgressBar(currentPercentage);
-                    lastPercentage = currentPercentage;
-                }
-
-            } catch (NumberFormatException e) {
-                System.err.println("Error parsing token parts: " + e.getMessage());
-                break;
+            int currentPercentage = (int) ((double) index / totalLength * 100);
+            currentPercentage = Math.min(currentPercentage, 100);
+            if (currentPercentage != lastPercentage) {
+                ProgressBar.printProgressBar(currentPercentage);
+                lastPercentage = currentPercentage;
+            }
+            if (currentPercentage == 100) {
+                System.out.println();
             }
         }
 
-        if (lastPercentage == 100) {
-            System.out.println();
+        byte[] outputBytes = new byte[decompressedOutput.size()];
+        for (int i = 0; i < decompressedOutput.size(); i++) {
+            outputBytes[i] = decompressedOutput.get(i);
         }
 
         String outputFilePath = outputPath.endsWith(".txt") ? outputPath : outputPath + ".txt";
         try {
-            Files.write(Paths.get(outputFilePath), decompressedOutput.toString().getBytes());
+            Files.write(Paths.get(outputFilePath), outputBytes);
             System.out.println("Decompressed output written to: " + outputFilePath);
         } catch (IOException e) {
             System.err.println("Error writing decompressed file: " + e.getMessage());

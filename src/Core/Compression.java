@@ -1,9 +1,7 @@
 package Core;
 
 import Utils.ProgressBar;
-
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -12,12 +10,11 @@ import java.util.List;
 public class Compression {
     static void compress(byte[] data, String outputPath) {
         System.out.println("Compressing...");
-        String input = new String(data, StandardCharsets.UTF_8);
-        int inputLength = input.length();
-        List<String> output = new ArrayList<>();
+        int inputLength = data.length;
+        List<Byte> output = new ArrayList<>();
 
-        int windowSize = 4096 * 8;
-        int lookaheadBufferSize = 4096 * 8;
+        int windowSize = 4096;
+        int lookaheadBufferSize = 255;
 
         int lastPercentage = -1;
 
@@ -30,7 +27,7 @@ public class Compression {
 
             for (int j = start; j < i; j++) {
                 int length = 0;
-                while (i + length < end && input.charAt(j + length) == input.charAt(i + length)) {
+                while (i + length < end && data[j + length] == data[i + length]) {
                     length++;
                 }
                 if (length > matchLength) {
@@ -39,29 +36,33 @@ public class Compression {
                 }
             }
 
-            if (matchLength > 0) {
-                int nextCharIndex = i + matchLength;
-                char nextChar = nextCharIndex < inputLength ? input.charAt(nextCharIndex) : '\0';
-                output.add(matchDistance + "," + matchLength + "," + nextChar);
-                i += matchLength + 1;
-            } else {
-                output.add("0,0," + input.charAt(i));
-                i++;
-            }
+            int nextByteIndex = i + matchLength;
+            byte nextByte = nextByteIndex < inputLength ? data[nextByteIndex] : 0;
+
+            output.add((byte) (matchDistance >> 8));
+            output.add((byte) matchDistance);
+            output.add((byte) (matchLength >> 8));
+            output.add((byte) matchLength);
+            output.add(nextByte);
+
+            i += matchLength + 1;
 
             int currentPercentage = (int) ((double) i / inputLength * 100);
-            currentPercentage = Math.min(currentPercentage, 100); // Clamp to 100%
+            currentPercentage = Math.min(currentPercentage, 100);
             if (currentPercentage != lastPercentage) {
                 ProgressBar.printProgressBar(currentPercentage);
                 lastPercentage = currentPercentage;
             }
         }
 
-        String compressedOutput = String.join("", output);
+        byte[] compressedOutput = new byte[output.size()];
+        for (int k = 0; k < output.size(); k++) {
+            compressedOutput[k] = output.get(k);
+        }
 
         String outputFilePath = outputPath.endsWith(".lz") ? outputPath : outputPath + ".lz";
         try {
-            Files.write(Paths.get(outputFilePath), compressedOutput.getBytes());
+            Files.write(Paths.get(outputFilePath), compressedOutput);
             System.out.println("\nCompressed output written to: " + outputFilePath);
         } catch (IOException e) {
             System.err.println("Error writing to file: " + e.getMessage());
