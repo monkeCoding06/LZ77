@@ -25,12 +25,12 @@ public class LZ77 extends File {
         switch (args[0]) {
             case "-c":
             case "--compress":
-                Compression.compress(fileData, args[args.length - 1].replace(".txt", "") + ".lz");
+                Compression.compress(fileData, args[args.length - 1].replace(".txt", ""));
                 break;
 
             case "-d":
             case "--decompress":
-                Decompression.decompress(fileData, args[args.length - 1].replace(".lz", "") + "unpacked" + ".txt");
+                Decompression.decompress(fileData, args[args.length - 1].replace(".lz", "") + "unpacked");
                 break;
 
             default:
