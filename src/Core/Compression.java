@@ -13,8 +13,7 @@ public class Compression {
         int inputLength = data.length;
         List<Byte> output = new ArrayList<>();
         int windowSize = 4096;
-        int lookaheadBufferSize = 4096;
-
+        int lookaheadBufferSize = 255;
         int lastPercentage = -1;
 
         for (int i = 0; i < inputLength; ) {
