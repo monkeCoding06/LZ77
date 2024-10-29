@@ -9,12 +9,11 @@ import java.util.List;
 
 public class Compression {
     static void compress(byte[] data, String outputPath) {
-        System.out.println("Compressing...");
+        System.out.println("\r"  + "Compressing...");
         int inputLength = data.length;
         List<Byte> output = new ArrayList<>();
-
         int windowSize = 4096;
-        int lookaheadBufferSize = 255;
+        int lookaheadBufferSize = 4096;
 
         int lastPercentage = -1;
 

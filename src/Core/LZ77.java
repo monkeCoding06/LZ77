@@ -15,7 +15,7 @@ public class LZ77 extends File {
             System.out.println(Messages.specifyPath);
             return;
         }
-
+        System.out.print("\r" + "Reading Data...");
         byte[] fileData = File.readFile(args[1]);
         if (fileData == null || fileData.length == 0) {
             System.out.println("Error: Could not read file or file is empty.");
