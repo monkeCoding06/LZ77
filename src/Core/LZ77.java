@@ -30,7 +30,7 @@ public class LZ77 extends File {
 
             case "-d":
             case "--decompress":
-                Decompression.decompress(fileData, args[args.length - 1].replace(".lz", "") + ".txt");
+                Decompression.decompress(fileData, args[args.length - 1].replace(".lz", "") + "unpacked" + ".txt");
                 break;
 
             default:
