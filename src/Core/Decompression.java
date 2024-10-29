@@ -10,7 +10,7 @@ import java.util.List;
 public class Decompression {
     static void decompress(byte[] data, String outputPath) {
         System.out.println("\r"  + "Deccompressing...");
-        int totalLength = data.length;
+        final int totalLength = data.length;
         List<Byte> decompressedOutput = new ArrayList<>();
 
         int index = 0;

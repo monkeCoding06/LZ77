@@ -1,6 +1,7 @@
 package Core;
 
 import Utils.ProgressBar;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -9,19 +10,19 @@ import java.util.List;
 
 public class Compression {
     static void compress(byte[] data, String outputPath) {
-        System.out.println("\r"  + "Compressing...");
+        System.out.println("\r" + "Compressing...");
         int inputLength = data.length;
         List<Byte> output = new ArrayList<>();
-        int windowSize = 4096;
-        int lookaheadBufferSize = 255;
+        final int windowSize = 4080;
+        final int lookaheadBufferSize = 255;
         int lastPercentage = -1;
 
         for (int i = 0; i < inputLength; ) {
             int matchLength = 0;
             int matchDistance = 0;
 
-            int start = Math.max(0, i - windowSize);
-            int end = Math.min(inputLength, i + lookaheadBufferSize);
+            final int start = Math.max(0, i - windowSize);
+            final int end = Math.min(inputLength, i + lookaheadBufferSize);
 
             for (int j = start; j < i; j++) {
                 int length = 0;
@@ -34,7 +35,7 @@ public class Compression {
                 }
             }
 
-            int nextByteIndex = i + matchLength;
+            final int nextByteIndex = i + matchLength;
             byte nextByte = nextByteIndex < inputLength ? data[nextByteIndex] : 0;
 
             output.add((byte) (matchDistance >> 8));
@@ -53,7 +54,7 @@ public class Compression {
             }
         }
 
-        byte[] compressedOutput = new byte[output.size()];
+        final byte[] compressedOutput = new byte[output.size()];
         for (int k = 0; k < output.size(); k++) {
             compressedOutput[k] = output.get(k);
         }
