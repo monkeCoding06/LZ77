@@ -9,7 +9,7 @@ import java.util.List;
 
 public class Decompression {
     static void decompress(byte[] data, String outputPath) {
-        System.out.println("\r"  + "Deccompressing...");
+        System.out.println("\r" + "Decompressing...");
         final int totalLength = data.length;
         List<Byte> decompressedOutput = new ArrayList<>();
 
@@ -17,12 +17,16 @@ public class Decompression {
         int lastPercentage = -1;
 
         while (index < totalLength) {
-            int matchDistance = ((data[index] & 0xFF) << 8) | (data[index + 1] & 0xFF);
-            int matchLength = ((data[index + 2] & 0xFF) << 8) | (data[index + 3] & 0xFF);
-            byte nextByte = data[index + 4];
+            int matchDistance = data[index] & 0xFF;
+            int matchLength = data[index + 1] & 0xFF;
+            byte nextByte = data[index + 2];
 
             if (matchDistance > 0) {
                 int start = decompressedOutput.size() - matchDistance;
+                if (start < 0) {
+                    System.err.println("Error: match distance out of bounds.");
+                    return;
+                }
                 for (int i = 0; i < matchLength; i++) {
                     decompressedOutput.add(decompressedOutput.get(start + i));
                 }
@@ -30,7 +34,7 @@ public class Decompression {
 
             decompressedOutput.add(nextByte);
 
-            index += 5;
+            index += 3;
 
             int currentPercentage = (int) ((double) index / totalLength * 100);
             currentPercentage = Math.min(currentPercentage, 100);

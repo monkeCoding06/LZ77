@@ -13,7 +13,7 @@ public class Compression {
         System.out.println("\r" + "Compressing...");
         int inputLength = data.length;
         List<Byte> output = new ArrayList<>();
-        final int windowSize = 4080;
+        final int windowSize = 255;
         final int lookaheadBufferSize = 255;
         int lastPercentage = -1;
 
@@ -26,7 +26,7 @@ public class Compression {
 
             for (int j = start; j < i; j++) {
                 int length = 0;
-                while (i + length < end && data[j + length] == data[i + length]) {
+                while (i + length < end && length < 255 && data[j + length] == data[i + length]) {
                     length++;
                 }
                 if (length > matchLength) {
@@ -35,12 +35,11 @@ public class Compression {
                 }
             }
 
+
             final int nextByteIndex = i + matchLength;
             byte nextByte = nextByteIndex < inputLength ? data[nextByteIndex] : 0;
 
-            output.add((byte) (matchDistance >> 8));
             output.add((byte) matchDistance);
-            output.add((byte) (matchLength >> 8));
             output.add((byte) matchLength);
             output.add(nextByte);
 
