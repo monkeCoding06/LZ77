@@ -24,7 +24,7 @@ public class Decompression {
             if (matchDistance > 0) {
                 int start = decompressedOutput.size() - matchDistance;
                 if (start < 0) {
-                    System.err.println("Error: match distance out of bounds.");
+                    System.err.println("Error: match distance out of bounds. index : " + start);
                     return;
                 }
                 for (int i = 0; i < matchLength; i++) {
