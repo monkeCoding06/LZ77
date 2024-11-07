@@ -1,4 +1,4 @@
-import Core.LZ77;
+import Core.LZ77.LZ77;
 
 public class Main {
     public static void main(String[] args) {
